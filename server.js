@@ -49,7 +49,7 @@ app.post('/prompt', async(req, res) => {
       let prompt = "Write aproximately two paragraph article on this topic: " + topic + " using this tone: " + tone + " in this style: " + style + " in this language: " + language;
       console.log("prompt: " + prompt)
       await openai.completions.create({
-            model: "text-davinci-003",
+            model: "gpt-3.5-turbo-instruct",
                       prompt: prompt,
                       max_tokens: 250,
                       temperature: 0.5,
@@ -72,7 +72,7 @@ app.get('/test-key', async (req, res) => {
     console.log("in test-key:" + openai.apiKey)
     let prompt = "Say hello world in French";
     await openai.completions.create({
-      model: "text-davinci-003",
+      model: "gpt-3.5-turbo-instruct",
       prompt: prompt,
       max_tokens: 100,
       temperature: 0.5,
