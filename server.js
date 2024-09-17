@@ -1,70 +1,63 @@
-import express from 'express';
-import path from 'path';
+const express = require('express');
+const fs = require('fs');
+const { createObjectCsvWriter } = require('csv-writer');
+const fetch = require('node-fetch');
+const bodyParser = require('body-parser');
+const { Configuration, OpenAIApi } = require('openai');
+
 const app = express();
-const port = 3030;
-import fs from 'fs';
-import axios from 'axios';
-import OpenAI from 'openai' ;
-import bodyParser from 'body-parser'   // really important otherwise the body of the request is empty
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static('public'));
+app.use(bodyParser.json());
 
-// get OPENAI_API_KEY from GitHub secrets
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-let openai = new OpenAI({apiKey: OPENAI_API_KEY});
+// OpenAI API setup
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 
-// Middleware to parse JSON payloads in POST requests
-app.use(express.json());
-
-// Serve static files from the 'public' folder
-app.use(express.static('./'));
-
-// Serve index.html at the root URL '/'
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/index.html'));
+// Setup CSV Writer
+const csvWriter = createObjectCsvWriter({
+  path: 'prompts_responses.csv',
+  header: [
+    { id: 'topic', title: 'TOPIC' },
+    { id: 'sentiment', title: 'SENTIMENT' },
+    { id: 'style', title: 'STYLE' },
+    { id: 'tone', title: 'TONE' },
+    { id: 'language', title: 'LANGUAGE' },
+    { id: 'response', title: 'RESPONSE' },
+  ],
+  append: true,
 });
 
-// GET route
-app.post('/test-prompt', async(req, res) => {
-    const topic = req.body.topic;
-    const style = req.body.style;
-    const tone = req.body.tone;
-    const language = req.body.language;
-    res.json({  message: "Write a two paragraph article on this topic: " + topic + "using this tone: " + tone + " in this style: " + style + " in this language: " + language });
-});
-// Existing imports and setup here...
+// POST endpoint to handle prompt input and LLM response
+app.post('/generate', async (req, res) => {
+  const { topic, sentiment, style, tone, language } = req.body;
 
-// New /prompt POST route
-
-
-app.post('/prompt', async(req, res) => {
-  // get the values from the request 
-  console.log(JSON.stringify(req.body));
-  const topic = req.body.topic;
-  const style = req.body.style;
-  const tone = req.body.tone;
-  const language = req.body.language;
-  console.log("topic: " + topic)
+  // Construct the prompt for GPT-3.5
+  const prompt = `Topic: ${topic}, Sentiment: ${sentiment}, Style: ${style}, Tone: ${tone}, Language: ${language}.`;
 
   try {
-      let prompt = "Write aproximately two paragraph article on this topic: " + topic + " using this tone: " + tone + " in this style: " + style + " in this language: " + language;
-      console.log("prompt: " + prompt)
-      await openai.completions.create({
-            model: "gpt-3.5-turbo-instruct",
-                      prompt: prompt,
-                      max_tokens: 250,
-                      temperature: 0.5,
-                    }).then((response) => {
-                        let chatResponse = response.choices[0].text;
-                        console.log("chatResponse: " + chatResponse);
-                        // send response text back to client
-                    res.send(chatResponse);
-      });
+    // Call GPT-3.5
+    const gptResponse = await openai.createCompletion({
+      model: 'gpt-3.5-turbo',
+      prompt,
+      max_tokens: 100,
+    });
+
+    const generatedResponse = gptResponse.data.choices[0].text.trim();
+
+    // Write the prompt and response to the CSV
+    await csvWriter.writeRecords([
+      { topic, sentiment, style, tone, language, response: generatedResponse },
+    ]);
+
+    // Send the response back to the client
+    res.json({ response: generatedResponse });
   } catch (error) {
-        console.error('Error:', error);
+    console.error('Error generating response:', error);
+    res.status(500).json({ error: 'Failed to generate response' });
   }
 });
-    
-    
 // Test API key
 app.get('/test-key', async (req, res) => {
   console.log("test-key")
@@ -85,7 +78,10 @@ app.get('/test-key', async (req, res) => {
       return console.error('Error:', error);
   }
 });
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
+
+  
