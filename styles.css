@@ -1,0 +1,53 @@
+/* Set the background color to black and text color to white */
+html, body {
+    background-color: #000;
+    color: #fff;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Ensure the container stretches the full height of the screen */
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Set all form controls to have a dark background and light text */
+.form-control, .form-select, textarea {
+    background-color: #222;
+    color: #fff;
+    border-color: #444;
+}
+
+/* Style the button to have a green background */
+.btn-primary {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+/* Button hover effect: a slightly darker green */
+.btn-primary:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* Ensure the textarea is styled consistently */
+textarea {
+    background-color: #222;
+    color: #fff;
+    border-color: #444;
+    resize: none;
+}
+
+/* Adjust margins for better spacing */
+h1, h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}

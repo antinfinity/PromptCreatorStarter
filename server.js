@@ -42,10 +42,10 @@ app.post('/generate', async (req, res) => {
   try {
     // Call GPT-3.5
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo-instruct",
+      model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: "You are a helpful assistant." },
-        { role: "user", content: "Write a haiku about a cat." }
+        { role: "user", content: prompt }
       ]
     });
 
@@ -84,7 +84,7 @@ app.get('/test-key', async (req, res) => {
   }
 });
 // Start server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
