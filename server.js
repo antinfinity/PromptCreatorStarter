@@ -1,19 +1,22 @@
-const express = require('express');
-const fs = require('fs');
-const { createObjectCsvWriter } = require('csv-writer');
-const fetch = require('node-fetch');
-const bodyParser = require('body-parser');
-const { Configuration, OpenAIApi } = require('openai');
+import express from 'express';
+import fs from 'fs';
+import { createObjectCsvWriter } from 'csv-writer';
+import fetch from 'node-fetch';
+import bodyParser from 'body-parser';
+import OpenAI from 'openai';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 app.use(express.static('public'));
 app.use(bodyParser.json());
 
-// OpenAI API setup
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY // Make sure to set your API key in an environment variable
 });
-const openai = new OpenAIApi(configuration);
 
 // Setup CSV Writer
 const csvWriter = createObjectCsvWriter({
@@ -38,13 +41,15 @@ app.post('/generate', async (req, res) => {
 
   try {
     // Call GPT-3.5
-    const gptResponse = await openai.createCompletion({
-      model: 'gpt-3.5-turbo',
-      prompt,
-      max_tokens: 100,
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo-instruct",
+      messages: [
+        { role: "system", content: "You are a helpful assistant." },
+        { role: "user", content: "Write a haiku about a cat." }
+      ]
     });
 
-    const generatedResponse = gptResponse.data.choices[0].text.trim();
+    const generatedResponse = response.choices[0].message.content
 
     // Write the prompt and response to the CSV
     await csvWriter.writeRecords([
