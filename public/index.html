@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="container mt-5">
+    <div class="col-12 col-md-12 col-lg-12">
       <h1 class="text-center mb-4">LLM Prompt Generator</h1>
       <form id="promptForm">
         <div class="mb-3">
@@ -67,14 +67,14 @@
           Generate Response
         </button>
       </form>
-
-      <div class="mt-4">
+      <div>
         <h2>Generated Response:</h2>
         <textarea
           id="response"
-          class="form-control"
+          class="form-control w-100"
           readonly
-          rows="5"
+          rows="8"
+          cols="50"
         ></textarea>
       </div>
     </div>
