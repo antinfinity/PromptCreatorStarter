@@ -14,37 +14,44 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="col-12 col-md-12 col-lg-12">
-      <h1 class="text-center mb-4">LLM Prompt Generator</h1>
-      <form id="promptForm">
-        <div class="mb-3">
-          <label for="topic" class="form-label">Topic:</label>
-          <input
-            type="text"
-            class="form-control"
-            id="topic"
-            name="topic"
-            placeholder="Enter a topic"
-            required
-          />
+    <div class="card">
+      <div class="card-body">
+        <h1 class="text-left mb-4">LLM Prompt Generator</h1>
+        <div class="row">
+          <div class="col">
+              <label for="topic" class="form-label">Topic:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="topic"
+                name="topic"
+                placeholder="Enter a topic"
+                required
+              />
+            </div>
+          </div>
         </div>
 
         <div class="mb-3">
-          <label for="sentiment" class="form-label">Sentiment:</label>
-          <select id="sentiment" class="form-select" name="sentiment" required>
-            <option value="positive">Positive</option>
-            <option value="neutral">Neutral</option>
-            <option value="negative">Negative</option>
-          </select>
+          <div class="row">
+            <div class="col-6">
+              <label for="sentiment" class="form-label">Sentiment:</label>
+              <select id="sentiment" class="form-select" name="sentiment" required>
+                <option value="positive">Positive</option>
+                <option value="neutral">Neutral</option>
+                <option value="negative">Negative</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label for="style" class="form-label">Style:</label>
+              <select id="style" class="form-select" name="style" required>
+                <option value="formal">Formal</option>
+                <option value="informal">Informal</option>
+              </select>
+            </div>
+         
         </div>
 
-        <div class="mb-3">
-          <label for="style" class="form-label">Style:</label>
-          <select id="style" class="form-select" name="style" required>
-            <option value="formal">Formal</option>
-            <option value="informal">Informal</option>
-          </select>
-        </div>
 
         <div class="mb-3">
           <label for="tone" class="form-label">Tone:</label>
@@ -62,11 +69,10 @@
             <option value="French">French</option>
           </select>
         </div>
-
-        <button type="submit" class="btn btn-primary w-100">
+       
+        <button type="submit" class="btn btn-primary mr-1">
           Generate Response
         </button>
-      </form>
       <div>
         <h2>Generated Response:</h2>
         <textarea
